@@ -52,6 +52,7 @@ def actualizarPais(pais):
                               ))
             mydb.commit()
             actualizarIdiomas(pais['alpha2Code'],pais['languages'])
+        """
         else:
             #Si existe, lo actualiza
             query = "UPDATE paises SET "
@@ -73,7 +74,7 @@ def actualizarPais(pais):
             mycursor.execute(query)
             mydb.commit()
             actualizarIdiomas(pais['alpha2Code'],pais['languages'])
-        
+        """
 
 """
 Main code
