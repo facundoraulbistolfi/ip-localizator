@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fbis.iplocalizator.models.Country;
+import com.fbis.iplocalizator.models.DistanceInfo;
 import com.fbis.iplocalizator.models.Ip2CountryModel;
 import com.fbis.iplocalizator.models.IpInfo;
 
@@ -31,5 +32,10 @@ public class IpLocalizatorService {
 			registroService.registrarConsulta(ip, c.getCodigo());
 		}
 		return info;
+	}
+	
+	public DistanceInfo getDistanceInformation() {
+		return new DistanceInfo(registroService.distanciaMasLarga(), registroService.distanciaMasCorta(), registroService.distanciaPromedio());
+		
 	}
 }

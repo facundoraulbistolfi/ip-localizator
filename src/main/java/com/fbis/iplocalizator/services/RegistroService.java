@@ -16,15 +16,15 @@ public class RegistroService {
 	}
 	
 	public double distanciaMasCorta() {
-		return 0.;
+		return paisesRepository.distanciaMasCercana();
 	}
 	
 	public double distanciaMasLarga() {
-		return 0.;
+		return paisesRepository.distanciaMasLejana();
 	}
 	
 	public double distanciaPromedio() {
-		return 0.;
+		return paisesRepository.distanciaPromedio();
 	}
 	
 }
