@@ -28,11 +28,17 @@ public class IpLocalizatorController {
 	@PostMapping("/ipinfo")
 	public String ipinfo(Model model, IpInfoRequest req) {
 		IpInfo info = service.getIpInformation(req.getIp_address());
+		
+		if(info.getCountry() == null) {
+			model.addAttribute("ip", info.getIp());
+			return "ip-notfound";
+		}
+		
 		model.addAttribute("ip", info.getIp());
-		model.addAttribute("nombre", info.getPais());
-		model.addAttribute("bandera", info.getBandera());
-		model.addAttribute("moneda", info.getMoneda());
-		model.addAttribute("distancia", info.getDistancia());
+		model.addAttribute("nombre", info.getCountry().getCodigo() +" - " +info.getCountry().getNombre());
+		model.addAttribute("bandera", "https://restcountries.eu/data/"+info.getCountry().getCodigo3().toLowerCase()+".svg");
+		model.addAttribute("moneda", "");
+		model.addAttribute("distancia", info.getCountry().getDistanciaBsAs());
 		return "ip-info";
 	}
 

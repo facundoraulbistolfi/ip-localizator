@@ -17,7 +17,7 @@ def actualizarIdiomas(country, listaIdiomas):
     for idioma in listaIdiomas:
         if(idioma['iso639_1'] is not None):
             #Si no existe en la tabla de idiomas, lo agrego
-            mycursor.execute("SELECT codigo, COUNT(*) FROM idiomas WHERE codigo = %s GROUP BY codigo",(idioma['iso639_1'],))
+            mycursor.execute("SELECT codigo FROM idiomas WHERE codigo = %s ", (idioma['iso639_1'],))
             mycursor.fetchall()
             
             if mycursor.rowcount == 0:
@@ -32,10 +32,53 @@ def actualizarIdiomas(country, listaIdiomas):
             if mycursor.rowcount == 0:
                 mycursor.execute("INSERT INTO idiomas_por_pais (codigoIdioma, codigoPais) VALUES(%s,%s)", (idioma['iso639_1'],country))
                 mydb.commit()
+                
+#Actualizar la tabla de monedas, y la de monedas por pais
+def actualizarMonedas(country, listaMonedas):
+    for moneda in listaMonedas:
+        if(moneda['code'] is not None) and (len(moneda['code']) == 3):
+            #Si no existe en la tabla de monedas, lo agrego
+            mycursor.execute("SELECT codigo, COUNT(*) FROM monedas WHERE codigo = %s GROUP BY codigo",(moneda['code'],))
+            mycursor.fetchall()
+            
+            if mycursor.rowcount == 0:
+                print("Agregar moneda")
+                print(moneda)
+                mycursor.execute("INSERT INTO monedas (codigo, nombre) VALUES(%s,%s)", (moneda['code'],moneda['name']))
+                mydb.commit()
+            
+            #Si no existe la relacion entre la moneda y el pais, la creo
+            mycursor.execute("SELECT codigoMoneda, codigoPais FROM monedas_por_pais WHERE codigoMoneda = %s AND codigoPais = %s",(moneda['code'],country))
+            mycursor.fetchall()
+            if mycursor.rowcount == 0:
+                mycursor.execute("INSERT INTO monedas_por_pais (codigoMoneda, codigoPais) VALUES(%s,%s)", (moneda['code'],country))
+                mydb.commit()
+                
+#Actualizar la tabla de timezones, y la de timezones por pais
+def actualizarZonasHorarias(country, listaTimezones):
+    for timezone in listaTimezones:
+        if(timezone is not None):
+            #Si no existe en la tabla de timezones, lo agrego
+            mycursor.execute("SELECT timezone, COUNT(*) FROM timezones WHERE timezone = %s GROUP BY timezone",(timezone,))
+            mycursor.fetchall()
+            
+            if mycursor.rowcount == 0:
+                print("Agregar timezone")
+                print(timezone)
+                mycursor.execute("INSERT INTO timezones (timezone) VALUES(%s)", (timezone,))
+                mydb.commit()
+            
+            #Si no existe la relacion entre el timezone y el pais, la creo
+            mycursor.execute("SELECT timezone, codigoPais FROM timezones_por_pais WHERE timezone = %s AND codigoPais = %s",(timezone,country))
+            mycursor.fetchall()
+            if mycursor.rowcount == 0:
+                mycursor.execute("INSERT INTO timezones_por_pais (timezone, codigoPais) VALUES(%s,%s)", (timezone,country))
+                mydb.commit()
 
 #Actualizar la tabla de paises
 def actualizarPais(pais):
-    if(pais['alpha2Code'] is not None):
+    print(pais['alpha2Code'])
+    if((pais['alpha2Code'] is not None) and (len(pais['alpha2Code']) == 2)):
         #Comprueba de que si ya existe un registro en la base de datos
         mycursor.execute("SELECT codigo, COUNT(*) FROM paises WHERE codigo = %s GROUP BY codigo",(pais['alpha2Code'],))
         mycursor.fetchall()
@@ -43,15 +86,16 @@ def actualizarPais(pais):
             #Si no existe, lo crea
             mycursor.execute("INSERT INTO paises"+
                              "(codigo, codigo3, codigoNum, nombre, nombreNat, latitud, longitud)"+
-                             " VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                             " VALUES (%s,%s,%s,%s,%s,%s,%s)",
                              (pais['alpha2Code'],pais['alpha3Code'],pais['numericCode'],
                              pais['name'],pais['nativeName'],
-                             float(pais['latlng'][0]) if (pais['latlng'] is None) else None,
-                             float(pais['latlng'][1]) if (pais['latlng'] is None) else None,
-                             pais['flag']
+                             float(pais['latlng'][0]) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None,
+                             float(pais['latlng'][1]) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None
                               ))
             mydb.commit()
             actualizarIdiomas(pais['alpha2Code'],pais['languages'])
+            actualizarMonedas(pais['alpha2Code'],pais['currencies'])
+            actualizarZonasHorarias(pais['alpha2Code'],pais['timezones'])
         """
         else:
             #Si existe, lo actualiza
