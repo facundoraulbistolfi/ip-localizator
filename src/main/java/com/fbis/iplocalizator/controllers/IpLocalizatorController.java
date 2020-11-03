@@ -25,16 +25,16 @@ public class IpLocalizatorController {
 	@GetMapping("/")
 	public String index(Model model) {
 		DistanceInfo info = service.getDistanceInformation();
-		model.addAttribute("minDist", String.format("%.2f",info.getMin()) + " Km");
-		model.addAttribute("maxDist", String.format("%.2f",info.getMax()) + " Km");
-		model.addAttribute("avgDist", String.format("%.2f",info.getAvg()) + " Km");
+		model.addAttribute("minDist", info.getMin());
+		model.addAttribute("maxDist", info.getMax());
+		model.addAttribute("avgDist", info.getAvg());
 		return "index";
 	}
 
-	@PostMapping("/ipinfo")
+	@GetMapping("/ipinfo")
 	public String ipinfo(Model model, IpInfoRequest req) {
 
-		String ip = req.getIp_address().trim();
+		String ip = req.getIp().trim();
 		if(!IpUtils.isValidIP(ip)) {
 			model.addAttribute("errorMsj", "La cadena " + ip + " no es una dirección IPv4 válida ");
 			return "error";
@@ -51,14 +51,13 @@ public class IpLocalizatorController {
 		model.addAttribute("codigo", info.getCountry().getCodigo());
 		model.addAttribute("nombre",  info.getCountry().getNombre());
 		model.addAttribute("nombreNat", info.getCountry().getNombreNativo());
-		model.addAttribute("bandera",
-				"https://restcountries.eu/data/" + info.getCountry().getCodigo3().toLowerCase() + ".svg");
+		model.addAttribute("codigo3",info.getCountry().getCodigo3().toLowerCase());
 		model.addAttribute("monedas", info.getCountry().getMonedas());
-		model.addAttribute("distancia", String.format("%.2f",info.getCountry().getDistanciaBA()));
+		model.addAttribute("distancia", info.getCountry().getDistanciaBA());
 		model.addAttribute("timezones", info.getCountry().getTimezonesNums());
 		model.addAttribute("idiomas", info.getCountry().getIdiomas());
-		model.addAttribute("latitud", String.format("%.2f",info.getCountry().getLatitud()));
-		model.addAttribute("longitud", String.format("%.2f",info.getCountry().getLongitud()));
+		model.addAttribute("latitud", info.getCountry().getLatitud());
+		model.addAttribute("longitud", info.getCountry().getLongitud());
 		
 		
 		return "ip-info";

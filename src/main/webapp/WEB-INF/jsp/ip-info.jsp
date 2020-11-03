@@ -1,15 +1,21 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <html>
 <head>
+<script src="js/jquery-3.5.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
+<style>
+body {
+	background-color: #343a40 !important;
+}
+</style>
 <body>
-	<div class="container-fluid bg-dark text-white col h-100 centered">
+	<div class="container text-white col centered">
 		<div>
 			<h1>${ip}</h1>
 			<div class="row">
@@ -21,17 +27,25 @@
 						<strong>Codigo ISO:</strong> ${codigo}
 					</p>
 					<p>
-						<strong>Coordenadas geograficas:</strong> (${latitud} ;
-						${longitud})
+						<strong>Coordenadas geograficas:</strong> (
+						<fmt:formatNumber type="number" maxFractionDigits="4"
+							value="${latitud}" />
+						;
+						<fmt:formatNumber type="number" maxFractionDigits="4"
+							value="${longitud}" />
+						)
 					</p>
 					<p>
-						<strong>Distancia a Buenos Aires:</strong> ${distancia} Km
+						<strong>Distancia a Buenos Aires:</strong>
+						<fmt:formatNumber type="number" maxFractionDigits="4"
+							value="${distancia}" />
+						Km
 					</p>
 					<p>
 						<strong>Bandera:</strong>
 					</p>
-					<img src=${bandera } style="width: 300px" class="img-rounded"
-						alt="bandera">
+					<img src="https://restcountries.eu/data/${codigo3}.svg"
+						style="width: 300px" class="img-rounded" alt="bandera">
 				</div>
 
 				<div class="col-sm-6">
@@ -52,7 +66,7 @@
 					</p>
 					<ul>
 						<c:forEach items="${monedas}" var="moneda">
-							<li>${moneda.codigo} - <c:out value="${moneda.nombre}" /> <c:if
+							<li>${moneda.codigo}-<c:out value="${moneda.nombre}" /> <c:if
 									test="${moneda.cambio > 0}">
 							(1 USD = <fmt:formatNumber type="number" maxFractionDigits="4"
 										value="${moneda.cambio}" />

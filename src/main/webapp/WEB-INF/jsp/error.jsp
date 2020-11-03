@@ -10,12 +10,17 @@
 .material-icons, .icon-text {
 	vertical-align: middle;
 }
+
+body {
+	background: #343a40 !important;
+}
 </style>
 </head>
 <body>
-	<div class="container-fluid bg-dark text-white col h-100 centered">
+	<div class="container-fluid text-white col centered">
 		<div class="text-center">
-			<h1>${errorMsj}</h1>
+			<h1>Ocurrió un error</h1>
+			<h2>${errorMsj}</h2>
 			<a href="/" class="btn btn-primary" role="button">Volver</a>
 		</div>
 	</div>
