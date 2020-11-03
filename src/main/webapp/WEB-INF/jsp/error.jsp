@@ -16,7 +16,7 @@
 	<div class="container-fluid bg-dark text-white col h-100 centered">
 		<div class="text-center">
 			<h1>${errorMsj}</h1>
-			<a href="/">home</a>
+			<a href="/" class="btn btn-primary" role="button">Volver</a>
 		</div>
 	</div>
 </body>

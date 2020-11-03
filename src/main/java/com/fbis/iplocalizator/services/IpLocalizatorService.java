@@ -27,9 +27,11 @@ public class IpLocalizatorService {
 		if(StringUtils.hasText(ip2Country.getCountryCode())) {
 			//Get country info
 			Country c = countryInfoService.getCountryInfo(ip2Country.getCountryCode());
-			info.setCountry(c);
-			//Registrar consulta
-			registroService.registrarConsulta(ip, c.getCodigo());
+			if(c != null) {
+				info.setCountry(c);
+				//Registrar consulta
+				registroService.registrarConsulta(ip, c.getCodigo());
+			}
 		}
 		return info;
 	}

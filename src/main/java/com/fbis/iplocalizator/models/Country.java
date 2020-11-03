@@ -1,5 +1,6 @@
 package com.fbis.iplocalizator.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Country {
@@ -53,12 +54,26 @@ public class Country {
 	public void setLongitud(Double longitud) {
 		this.longitud = longitud;
 	}
+	
+	public List<String> getTimezonesNums(){
+		List<String> l = new ArrayList<String>(timezones);
+		l.replaceAll(this::quitUTC);
+		return l;		
+	}
+	
+	private String quitUTC(String utc) {
+		return utc.substring(3);
+	}
+	
 	public List<String> getTimezones() {
 		return timezones;
 	}
 	public void setTimezones(List<String> timezones) {
 		this.timezones = timezones;
 	}
+	
+	
+	
 	public List<Currency> getMonedas() {
 		return monedas;
 	}
@@ -72,22 +87,22 @@ public class Country {
 		this.idiomas = idiomas;
 	}
 	
-	public Long getDistanciaBsAs() {
-		return 0L;
-	}
-	
-	@Override
-	public String toString() {
-		return "Country [codigo=" + codigo + ", codigo3=" + codigo3 + ", codigoNum=" + codigoNum + ", nombre=" + nombre
-				+ ", nombreNativo=" + nombreNativo + ", latitud=" + latitud + ", longitud=" + longitud + ", timezones="
-				+ timezones + ", monedas=" + monedas + ", idiomas=" + idiomas + "]";
-	}
 	public Double getDistanciaBA() {
 		return distanciaBA;
 	}
 	public void setDistanciaBA(Double distanciaBA) {
 		this.distanciaBA = distanciaBA;
 	}
+	@Override
+	public String toString() {
+		return "Country [codigo=" + codigo + ", codigo3=" + codigo3 + ", codigoNum=" + codigoNum + ", nombre=" + nombre
+				+ ", nombreNativo=" + nombreNativo + ", latitud=" + latitud + ", longitud=" + longitud
+				+ ", distanciaBA=" + distanciaBA + ", timezones=" + timezones + ", monedas=" + monedas + ", idiomas="
+				+ idiomas + "]";
+	}
+	
+	
+	
 	
 	
 }

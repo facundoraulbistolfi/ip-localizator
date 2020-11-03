@@ -10,6 +10,7 @@ import com.fbis.iplocalizator.models.DistanceInfo;
 import com.fbis.iplocalizator.models.IpInfo;
 import com.fbis.iplocalizator.models.IpInfoRequest;
 import com.fbis.iplocalizator.services.IpLocalizatorService;
+import com.fbis.iplocalizator.utils.IpUtils;
 
 @Controller
 public class IpLocalizatorController {
@@ -32,19 +33,34 @@ public class IpLocalizatorController {
 
 	@PostMapping("/ipinfo")
 	public String ipinfo(Model model, IpInfoRequest req) {
-		IpInfo info = service.getIpInformation(req.getIp_address());
 
-		if (info.getCountry() == null) {
-			model.addAttribute("errorMsj", "The ip address " + info.getIp() + " was not found");
+		String ip = req.getIp_address().trim();
+		if(!IpUtils.isValidIP(ip)) {
+			model.addAttribute("errorMsj", "La cadena " + ip + " no es una dirección IPv4 válida ");
 			return "error";
 		}
+		
+		IpInfo info = service.getIpInformation(ip);
 
+		if (info.getCountry() == null) {
+			model.addAttribute("errorMsj", "La dirección IP " + info.getIp() + " no fue encontrada");
+			return "error";
+		}
+		
 		model.addAttribute("ip", info.getIp());
-		model.addAttribute("nombre", info.getCountry().getCodigo() + " - " + info.getCountry().getNombre());
+		model.addAttribute("codigo", info.getCountry().getCodigo());
+		model.addAttribute("nombre",  info.getCountry().getNombre());
+		model.addAttribute("nombreNat", info.getCountry().getNombreNativo());
 		model.addAttribute("bandera",
 				"https://restcountries.eu/data/" + info.getCountry().getCodigo3().toLowerCase() + ".svg");
-		model.addAttribute("moneda", "");
-		model.addAttribute("distancia", info.getCountry().getDistanciaBsAs());
+		model.addAttribute("monedas", info.getCountry().getMonedas());
+		model.addAttribute("distancia", String.format("%.2f",info.getCountry().getDistanciaBA()));
+		model.addAttribute("timezones", info.getCountry().getTimezonesNums());
+		model.addAttribute("idiomas", info.getCountry().getIdiomas());
+		model.addAttribute("latitud", String.format("%.2f",info.getCountry().getLatitud()));
+		model.addAttribute("longitud", String.format("%.2f",info.getCountry().getLongitud()));
+		
+		
 		return "ip-info";
 	}
 

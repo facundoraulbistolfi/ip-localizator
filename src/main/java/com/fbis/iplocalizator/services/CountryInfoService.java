@@ -15,6 +15,7 @@ public class CountryInfoService {
 	public Country getCountryInfo(String id_country) {
 		if(!paisesRepository.existsPais(id_country)) {
 			//TODO: obtener pais de la API y actualizar
+			System.out.println("EL PAIS NO EXISTE");
 			return null;
 		}
 		Country c = paisesRepository.getPais(id_country);
