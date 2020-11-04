@@ -17,8 +17,14 @@ public class RestCountriesService {
 	public RestCountriesCountryModel getCountry(String id)
 	{
 	    final String uri = "https://restcountries.eu/rest/v2/alpha/";
-	    RestCountriesCountryModel result = restTemplate.getForObject(uri+id, RestCountriesCountryModel.class);
-	    return result;
+	    if(id == null) return null;
+	    try {
+	    	RestCountriesCountryModel result = restTemplate.getForObject(uri+id, RestCountriesCountryModel.class);
+		    return result;
+	    }catch(Exception e) {
+	    	System.err.println(e);
+	    	return null;
+	    }
 	} 
 	
 }

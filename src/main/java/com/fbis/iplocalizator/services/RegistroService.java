@@ -26,5 +26,9 @@ public class RegistroService {
 	public double distanciaPromedio() {
 		return paisesRepository.distanciaPromedio();
 	}
+
+	public String getPaisIP(String ip) {
+		return paisesRepository.getPaisPorIPPorUltimosDias(ip);
+	}
 	
 }

@@ -7,7 +7,7 @@ import org.springframework.util.StringUtils;
 import com.fbis.iplocalizator.models.Country;
 import com.fbis.iplocalizator.models.DistanceInfo;
 import com.fbis.iplocalizator.models.Ip2CountryModel;
-import com.fbis.iplocalizator.models.IpInfo;
+import com.fbis.iplocalizator.models.IpInfoResponse;
 
 @Component
 public class IpLocalizatorService {
@@ -19,18 +19,28 @@ public class IpLocalizatorService {
 	@Autowired
 	RegistroService registroService;
 	
-	public IpInfo getIpInformation(String ip) {
-		IpInfo info = new IpInfo();
-		//Set country
-		Ip2CountryModel ip2Country = this.ip2CountryService.getIpCountry(ip);
+	public IpInfoResponse getIpInformation(String ip) {
+		IpInfoResponse info = new IpInfoResponse();
 		info.setIp(ip);
-		if(StringUtils.hasText(ip2Country.getCountryCode())) {
-			//Get country info
-			Country c = countryInfoService.getCountryInfo(ip2Country.getCountryCode());
-			if(c != null) {
+		
+		//Reviso primero si no está entre las ultimas consultas de la BD
+		String codigoPais = registroService.getPaisIP(ip);
+		boolean enDB = true;
+		if(codigoPais == null) {
+			//Sino, busco la IP en la API
+			Ip2CountryModel ip2Country = this.ip2CountryService.getIpCountry(ip);
+			codigoPais = ip2Country.getCountryCode();
+			enDB = false;
+		}
+		
+		//Reviso si se me devolvio algun codigo de pais
+		if(StringUtils.hasText(codigoPais)) {
+			//Obtengo la información del pais
+			Country c = countryInfoService.getCountryInfo(codigoPais);
+			if(c != null) { //Si la IP corresponde a un pais
 				info.setCountry(c);
 				//Registrar consulta
-				registroService.registrarConsulta(ip, c.getCodigo());
+				registroService.registrarConsulta(enDB?ip+"'":ip, c.getCodigo());
 			}
 		}
 		return info;

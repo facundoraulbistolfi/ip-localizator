@@ -8,10 +8,26 @@ import json
 import requests
 import mysql.connector
 from datetime import datetime
+from math import radians, cos, sin, asin, sqrt, atan2
 
 """
 Funciones
 """
+#Funcion para calcular la distancia
+def haversine(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371 # km
+
+    dlat = radians(lat2-lat1)
+    dlon = radians(lon2-lon1)
+    a = sin(dlat/2) * sin(dlat/2) + cos(radians(lat1)) \
+        * cos(radians(lat2)) * sin(dlon/2) * sin(dlon/2)
+    c = 2 * atan2(sqrt(a), sqrt(1-a))
+    d = radius * c
+
+    return d
+
 #Actualizar la tabla de idiomas, y la de idiomas por pais
 def actualizarIdiomas(country, listaIdiomas):
     for idioma in listaIdiomas:
@@ -85,12 +101,13 @@ def actualizarPais(pais):
         if mycursor.rowcount == 0:
             #Si no existe, lo crea
             mycursor.execute("INSERT INTO paises"+
-                             "(codigo, codigo3, codigoNum, nombre, nombreNat, latitud, longitud)"+
-                             " VALUES (%s,%s,%s,%s,%s,%s,%s)",
+                             "(codigo, codigo3, codigoNum, nombre, nombreNat, latitud, longitud, distanciaBA)"+
+                             " VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
                              (pais['alpha2Code'],pais['alpha3Code'],pais['numericCode'],
                              pais['name'],pais['nativeName'],
                              float(pais['latlng'][0]) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None,
-                             float(pais['latlng'][1]) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None
+                             float(pais['latlng'][1]) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None,
+                             haversine((-34.0, -64.0), (float(pais['latlng'][0]), float(pais['latlng'][1]))) if ((pais['latlng'] is not None)and(len(pais['latlng'])==2)) else None,
                               ))
             mydb.commit()
             actualizarIdiomas(pais['alpha2Code'],pais['languages'])

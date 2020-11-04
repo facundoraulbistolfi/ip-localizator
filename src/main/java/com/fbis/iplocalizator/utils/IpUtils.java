@@ -15,6 +15,7 @@ public class IpUtils {
 
 	private static final Pattern pattern = Pattern.compile(IPV4_PATTERN);
 
+	//Valida que sea una dirección IPv4
 	public static boolean isValidIP(final String ip) {
 		Matcher matcher = pattern.matcher(ip);
 		return matcher.matches();

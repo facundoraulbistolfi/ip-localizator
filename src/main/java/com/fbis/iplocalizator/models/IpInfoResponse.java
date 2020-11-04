@@ -1,6 +1,6 @@
 package com.fbis.iplocalizator.models;
 
-public class IpInfo {
+public class IpInfoResponse {
 
 	private String ip;
 	private Country country;
